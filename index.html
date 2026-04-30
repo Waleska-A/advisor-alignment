@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advisor Energy Alignment</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #1a1a2e, #0f0f1a);
+    color: #fff;
+    text-align: center;
+    padding: 25px 10px;
+  }
+
+  h2 {
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+  }
+
+  .sub {
+    font-size: 14px;
+    opacity: 0.75;
+    margin-bottom: 20px;
+  }
+
+  .spread {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    width: 180px;
+    height: 300px;
+    perspective: 1000px;
+  }
+
+  .inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+  }
+
+  .flip .inner {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    backface-visibility: hidden;
+    box-shadow: 0 0 20px rgba(123,92,255,0.4);
+  }
+
+  .back {
+    background: linear-gradient(135deg, #7b5cff, #3a2a8f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .front {
+    background: #1c1c2e;
+    transform: rotateY(180deg);
+    padding: 10px;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .label {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 5px;
+  }
+
+  button {
+    margin-top: 25px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #7b5cff, #5a3ee0);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(123,92,255,0.6);
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  .status {
+    margin-top: 10px;
+    font-size: 13px;
+    opacity: 0.8;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>🔮 Advisor Alignment</h2>
+<p class="sub">Take a breath. Set your intention for the clients you’ll serve today.</p>
+
+<div class="spread">
+
+  <div class="card" id="card1">
+    <div class="inner">
+      <div class="face back">Past</div>
+      <div class="face front" id="front1"></div>
+    </div>
+  </div>
+
+  <div class="card" id="card2">
+    <div class="inner">
+      <div class="face back">Present</div>
+      <div class="face front" id="front2"></div>
+    </div>
+  </div>
+
+  <div class="card" id="card3">
+    <div class="inner">
+      <div class="face back">Future</div>
+      <div class="face front" id="front3"></div>
+    </div>
+  </div>
+
+</div>
+
+<button onclick="draw()">Reveal Your Alignment</button>
+
+<div class="status" id="status"></div>
+
+<script>
+const cards = [
+  {
+    name: "The Star",
+    message: "Bring calm, hope, and reassurance into your readings today.",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg"
+  },
+  {
+    name: "The Hermit",
+    message: "Lead with wisdom. Listen more than you speak.",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg"
+  },
+  {
+    name: "The Sun",
+    message: "Your energy uplifts others—let that shine naturally.",
+    image: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg"
+  },
+  {
+    name: "The Moon",
+    message: "Trust subtle impressions. Not everything needs to be explained.",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg"
+  }
+];
+
+function getCard() {
+  return cards[Math.floor(Math.random() * cards.length)];
+}
+
+function fillCard(id, card, label) {
+  document.getElementById(id).innerHTML = `
+    <img src="${card.image}">
+    <h4>${card.name}</h4>
+    <div class="label">${label}</div>
+    <p>${card.message}</p>
+  `;
+}
+
+function draw() {
+  const status = document.getElementById("status");
+  status.innerText = "Aligning your energy...";
+
+  setTimeout(() => {
+    const today = new Date().toDateString();
+    let saved = localStorage.getItem("advisorSpread");
+
+    let spread;
+
+    if (saved) {
+      saved = JSON.parse(saved);
+      if (saved.date === today) spread = saved.spread;
+    }
+
+    if (!spread) {
+      spread = [getCard(), getCard(), getCard()];
+      localStorage.setItem("advisorSpread", JSON.stringify({ date: today, spread }));
+    }
+
+    fillCard("front1", spread[0], "What you're releasing");
+    fillCard("front2", spread[1], "How to show up");
+    fillCard("front3", spread[2], "Guidance for today");
+
+    document.getElementById("card1").classList.add("flip");
+    document.getElementById("card2").classList.add("flip");
+    document.getElementById("card3").classList.add("flip");
+
+    status.innerText = "You're aligned. Trust your guidance today ✨";
+
+  }, 1800);
+}
+</script>
+
+</body>
+</html>
